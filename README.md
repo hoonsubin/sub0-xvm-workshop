@@ -1,34 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sub0 XVM Contract Demo App
 
-## Getting Started
+## Introduction
 
-First, run the development server:
+This repository contains the full project for the Sub0 developer conference workshop.
+The demo will focus on controlling an EVM ERC20 tokens from a Substrate native account.
+With XVM, we can create a developer environment where projects can reside either in EVM with Ethereum signers or WASM contract with Substrate native signers.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Architecture
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+XVM (Cross-Virtual Machine) takes a very straight-forward approach to interoperability as XVM is completely synchronous in the same chain.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+![XVM Architecture](img/xvm-diagram.jpg)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+For the call to work, we encode the arguments that are passed to a smart contract function and feed them to the chain extension.
+The chain extension will communicate with the XVM core and send the message to the correct VM adapter with the corresponding ID.
+That is when the contract is executed on chain.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Prerequisites and Preparation
 
-## Learn More
+This demo is made with Debian Linux in mind, but the same requirements should apply to any Unix variant OS like macOS.
 
-To learn more about Next.js, take a look at the following resources:
+1. Install [Rust](https://www.rust-lang.org/tools/install)
+2. Install [Cargo Contract](https://github.com/paritytech/cargo-contract)
+3. Install npm (I recommend using [NVM](https://github.com/nvm-sh/nvm))
+4. Install an Ethereum wallet and a Substrate wallet to your browser (we will use MetaMask and Talisman on Firefox for this example)
+5. Clone the [Astar collator node](https://github.com/AstarNetwork/Astar/tree/feature/pallet-xvm-v2) and check out the `feature/pallet-xvm-v2` branch
+6. Build the Astar collator node using `cargo build --release`
+7. Run the Astar collator in a local dev mode with the `--dev --tmp` flag
+8. (Optional) Clone the [ink XVM SDK](https://github.com/AstarNetwork/ink-xvm-sdk) repository and build the contract using `cargo contract build` (note that you have to build directly from the contract folder like `erc20` or `psp22-controller`). Because this demo repository contains the pre-compiled contract binaries, this step is optional
+9. Import the EVM developer account private key `0x01ab6e801c06e59ca97a14fc0a1978b27fa366fc87450e0b65459dd3515b7391` to your Ethereum wallet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Once you confirm that your collator is running in dev mode, your Ethereum wallet is connected to the local network, and you successfully imported the EVM dev account that is fully funded, you should be ready to go.
