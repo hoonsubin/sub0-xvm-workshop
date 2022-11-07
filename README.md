@@ -6,6 +6,8 @@ This repository contains the full project for the Sub0 developer conference work
 The demo will focus on controlling an EVM ERC20 tokens from a Substrate native account.
 With XVM, we can create a developer environment where projects can reside either in EVM with Ethereum signers or WASM contract with Substrate native signers.
 
+Because we are controlling the ERC20 tokens in the EVM environment from a native account, we will extensively use the [EVM mapped address](https://medium.com/astar-network/using-astar-network-account-between-substrate-and-evm-656643df22a0), which does not have a direct signer attached to it.
+
 ## Architecture
 
 XVM (Cross-Virtual Machine) takes a very straight-forward approach to interoperability as XVM is completely synchronous in the same chain.
