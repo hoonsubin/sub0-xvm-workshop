@@ -20,13 +20,13 @@ export default function App() {
   const { wallet, getAccounts, initEvmProvider, isConnectedToEvm } =
     useWalletContext();
 
-  const _onClickConnectEvm = async () => {
+  const handleClickConnectEvm = async () => {
     console.log("connecting to MetaMask");
     await initEvmProvider();
-    console.log();
+    console.log(getAccounts());
   };
 
-  const _onClickConnectNative = async () => {
+  const handleClickConnectNative = async () => {
     console.log("Connecting to Talisman");
   };
 
@@ -43,13 +43,13 @@ export default function App() {
             alignItems="center"
           >
             <Button
-              onClick={_onClickConnectEvm}
+              onClick={handleClickConnectEvm}
               variant="contained"
               disabled={isConnectedToEvm}
             >
               Connect MetaMask
             </Button>
-            <Button onClick={_onClickConnectNative} variant="contained">
+            <Button onClick={handleClickConnectNative} variant="contained">
               Connect Talisman
             </Button>
           </Stack>
