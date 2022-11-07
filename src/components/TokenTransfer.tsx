@@ -29,7 +29,7 @@ const TokenTransfer = () => {
           Token Name
         </Typography>
         <div style={{ marginTop: 3 }}>
-          <TextField id="outlined-basic" label="Address" variant="outlined" />
+          <TextField id="outlined-basic" label="ERC20 Address" variant="outlined" />
           {/* Check if the input address is SS58 or H160. If SS58, it will convert it to H160 and read the balance*/}
           <Button>Check Balance</Button>
         </div>
