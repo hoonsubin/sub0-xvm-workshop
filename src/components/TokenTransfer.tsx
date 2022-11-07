@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { Account } from "../types/chain";
 import { useWalletContext } from "./Web3Provider";
 import AccountOptions from "./AccountOptions";
+import AddressInput from "./AddressInput";
 
 const TokenTransfer = () => {
   const { getAccounts } = useWalletContext();
@@ -30,13 +31,11 @@ const TokenTransfer = () => {
             Token Name
           </Typography>
           <div style={{ marginTop: 3 }}>
-            <TextField
-              id="outlined-basic"
-              label="Account Address"
-              variant="outlined"
+            <AddressInput
+              inputLabel="Account Address"
+              buttonLabel="Check Balance"
+              onClick={(addr) => console.log(`Checking balance for ${addr}`)}
             />
-            {/* Check if the input address is SS58 or H160. If SS58, it will convert it to H160 and read the balance*/}
-            <Button>Check Balance</Button>
           </div>
 
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
@@ -55,15 +54,16 @@ const TokenTransfer = () => {
             onSelectAccount={handleSelectAccount}
             label="From"
           />
-          {
-            activeAccount? (
-              <Typography>
-                {activeAccount.address}
-              </Typography>
-            ) : <></>
-          }
-          <TextField id="outlined-basic" label="to" variant="outlined" />
-          <Button>Transfer!</Button>
+          {activeAccount ? (
+            <Typography>{activeAccount.address}</Typography>
+          ) : (
+            <></>
+          )}
+          <AddressInput
+            inputLabel="to"
+            buttonLabel="Transfer!"
+            onClick={(addr) => console.log(`Sending tokens to ${addr}`)}
+          />
         </div>
       </CardContent>
     </Card>

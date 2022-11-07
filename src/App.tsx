@@ -23,7 +23,6 @@ export default function App() {
   const handleClickConnectEvm = async () => {
     console.log("connecting to MetaMask");
     await initEvmProvider();
-    console.log(getAccounts());
   };
 
   const handleClickConnectNative = async () => {
@@ -47,10 +46,10 @@ export default function App() {
               variant="contained"
               disabled={isConnectedToEvm}
             >
-              Connect MetaMask
+              {isConnectedToEvm ? "Connected to MetaMask!": "Connect your MetaMask"}
             </Button>
             <Button onClick={handleClickConnectNative} variant="contained">
-              Connect Talisman
+              Connect to Talisman
             </Button>
           </Stack>
 
