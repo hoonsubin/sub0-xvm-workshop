@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import TokenTransfer from "./components/TokenTransfer";
 import { Container, Typography, Box, Link, Button } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useWalletContext } from "./components/Web3Provider";
+import { useWalletContext } from "./providers";
 
 function Copyright() {
   return (
@@ -46,14 +46,16 @@ export default function App() {
               variant="contained"
               disabled={isConnectedToEvm}
             >
-              {isConnectedToEvm ? "Connected to MetaMask!": "Connect your MetaMask"}
+              {isConnectedToEvm
+                ? "Connected to MetaMask!"
+                : "Connect your MetaMask"}
             </Button>
             <Button onClick={handleClickConnectNative} variant="contained">
               Connect to Talisman
             </Button>
           </Stack>
 
-          <TokenTransfer />
+          {isConnectedToEvm ? <TokenTransfer /> : <></>}
 
           <Copyright />
         </Box>

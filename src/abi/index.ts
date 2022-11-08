@@ -1,9 +1,9 @@
-import evmErc20 from './evm-erc20.json';
-import wasmErc20 from './wasm-erc20.json';
-import wasmPsp22 from './wasm-psp22.json';
+import evmErc20Abi from './evm-erc20.json';
+import wasmErc20Abi from './wasm-erc20.json';
+import wasmPsp22Abi from './wasm-psp22.json';
 
-export default {
-    evmErc20,
-    wasmErc20,
-    wasmPsp22
+export {
+    evmErc20Abi,
+    wasmErc20Abi,
+    wasmPsp22Abi
 }
