@@ -4,7 +4,8 @@ import { Account } from "../types/chain";
 import { useWalletContext, useContractContext } from "../providers";
 import AccountOptions from "./AccountOptions";
 import AddressInput from "./AddressInput";
-import * as helpers from '../helpers';
+import * as helpers from "../helpers";
+import BigNumber from "bignumber.js";
 
 interface TokenMetadata {
   name: string;
@@ -16,7 +17,8 @@ const TokenTransfer = () => {
   const { getAccounts } = useWalletContext();
   const { erc20Evm } = useContractContext();
   const [activeAccount, setActiveAccount] = useState<Account>();
-  const [tokenBal, setTokenBal] = useState("");
+  const [sendAmount, setSendAmount] = useState<BigNumber>(new BigNumber(0));
+  const [tokenBal, setTokenBal] = useState("0");
   const [tokenMeta, setTokenMeta] = useState<TokenMetadata>({
     name: "",
     symbol: "",
@@ -31,13 +33,27 @@ const TokenTransfer = () => {
 
   const handleSelectAccount = (account: Account) => {
     setActiveAccount(account);
-    console.log(`User selected account ${account.address}`);
   };
 
-  const handleTokenTransfer = (to: string) => {
-    console.log(`Transferring token to ${to}`);
+  const handleTokenTransfer = async (to: string) => {
+    if (!activeAccount) {
+      throw new Error("No active account selected");
+    }
 
-    console.log(erc20Evm.options);
+    const amount = sendAmount.toFixed();
+    const fromAccount = activeAccount?.address;
+
+    console.log(`Transferring ${amount} Wei from ${fromAccount} to ${to}`);
+
+    if (activeAccount.type === "h160") {
+      const result = await erc20Evm.methods
+        .transfer(to, amount)
+        .send({ from: fromAccount });
+      console.log(result);
+    } else {
+      //todo: ensure that we refactor this to support Substrate transactions later
+      throw new Error("Substrate native transaction not implemented yet");
+    }
   };
 
   // fetching token metadata upon render
@@ -84,7 +100,18 @@ const TokenTransfer = () => {
           <Typography variant="h5" component="div">
             Transfer
           </Typography>
-          <TextField id="outlined-basic" label="amount" variant="outlined" />
+          <TextField
+            id="outlined-basic"
+            label="amount"
+            variant="outlined"
+            onChange={(i) =>
+              setSendAmount(
+                new BigNumber(
+                  helpers.decimalToDenom(i.target.value, tokenMeta.decimals)
+                )
+              )
+            }
+          />
 
           <AccountOptions
             accounts={getAccounts()}
