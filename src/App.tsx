@@ -1,7 +1,8 @@
-import * as React from "react";
+import React from "react";
 import TokenTransfer from "./components/TokenTransfer";
 import { Container, Typography, Box, Link, Button } from "@mui/material";
 import { Stack } from "@mui/system";
+import { useWalletContext } from "./providers";
 
 function Copyright() {
   return (
@@ -16,6 +17,18 @@ function Copyright() {
 }
 
 export default function App() {
+  const { wallet, getAccounts, initEvmProvider, isConnectedToEvm } =
+    useWalletContext();
+
+  const handleClickConnectEvm = async () => {
+    console.log("connecting to MetaMask");
+    await initEvmProvider();
+  };
+
+  const handleClickConnectNative = async () => {
+    console.log("Connecting to Talisman");
+  };
+
   return (
     <>
       <Container maxWidth="md">
@@ -28,11 +41,21 @@ export default function App() {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Button variant="contained">Connect MetaMask</Button>
-            <Button variant="contained">Connect Talisman</Button>
+            <Button
+              onClick={handleClickConnectEvm}
+              variant="contained"
+              disabled={isConnectedToEvm}
+            >
+              {isConnectedToEvm
+                ? "Connected to MetaMask!"
+                : "Connect your MetaMask"}
+            </Button>
+            <Button onClick={handleClickConnectNative} variant="contained">
+              Connect to Talisman
+            </Button>
           </Stack>
 
-          <TokenTransfer />
+          {isConnectedToEvm ? <TokenTransfer /> : <></>}
 
           <Copyright />
         </Box>
