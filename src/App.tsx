@@ -17,8 +17,13 @@ function Copyright() {
 }
 
 export default function App() {
-  const { wallet, getAccounts, initEvmProvider, isConnectedToEvm } =
-    useWalletContext();
+  const {
+    wallet,
+    initSubstrateProvider,
+    initEvmProvider,
+    isConnectedToSubstrate,
+    isConnectedToEvm,
+  } = useWalletContext();
 
   const handleClickConnectEvm = async () => {
     console.log("connecting to MetaMask");
@@ -27,6 +32,7 @@ export default function App() {
 
   const handleClickConnectNative = async () => {
     console.log("Connecting to Talisman");
+    await initSubstrateProvider();
   };
 
   return (
@@ -50,12 +56,22 @@ export default function App() {
                 ? "Connected to MetaMask!"
                 : "Connect your MetaMask"}
             </Button>
-            <Button onClick={handleClickConnectNative} variant="contained">
-              Connect to Talisman
+            <Button
+              onClick={handleClickConnectNative}
+              variant="contained"
+              disabled={isConnectedToSubstrate}
+            >
+              {isConnectedToSubstrate
+                ? "Connected to Talisman"
+                : "Connect your Talisman"}
             </Button>
           </Stack>
 
-          {isConnectedToEvm ? <TokenTransfer /> : <></>}
+          {isConnectedToEvm && isConnectedToSubstrate ? (
+            <TokenTransfer />
+          ) : (
+            <></>
+          )}
 
           <Copyright />
         </Box>

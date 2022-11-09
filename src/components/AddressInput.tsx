@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import React, { useState } from "react";
-import Web3 from "web3";
+import * as polkaUtilsCrypto from "@polkadot/util-crypto";
+import * as polkaUtils from "@polkadot/util";
 
 type Props = {
   inputLabel: string;
@@ -17,10 +18,17 @@ const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
   };
 
   const handleOnInput = (input: string) => {
-    //todo: also check if it's a valid SS58 address
-    if (Web3.utils.isAddress(input)) {
+    // check if the input is a valid ethereum address
+    if (polkaUtilsCrypto.isEthereumAddress(input)) {
+      // converts the address
       setAddress(input);
       setIsValidInput(true);
+    } else if (polkaUtilsCrypto.isAddress(input)) {
+      // if the input is a valid substrate address
+      const mappedEvmAddr = polkaUtils.u8aToHex(
+        polkaUtilsCrypto.addressToEvm(input)
+      );
+      setAddress(mappedEvmAddr);
     } else {
       if (isValidInput) setIsValidInput(false);
     }
