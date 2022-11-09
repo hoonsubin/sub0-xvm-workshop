@@ -18,17 +18,10 @@ const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
   };
 
   const handleOnInput = (input: string) => {
-    // check if the input is a valid ethereum address
-    if (polkaUtilsCrypto.isEthereumAddress(input)) {
-      // converts the address
+    // check if the input is a valid ethereum or Substrate address
+    if (polkaUtilsCrypto.isEthereumAddress(input) || polkaUtilsCrypto.isAddress(input)) {
       setAddress(input);
       setIsValidInput(true);
-    } else if (polkaUtilsCrypto.isAddress(input)) {
-      // if the input is a valid substrate address
-      const mappedEvmAddr = polkaUtils.u8aToHex(
-        polkaUtilsCrypto.addressToEvm(input)
-      );
-      setAddress(mappedEvmAddr);
     } else {
       if (isValidInput) setIsValidInput(false);
     }

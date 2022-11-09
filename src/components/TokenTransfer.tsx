@@ -6,6 +6,8 @@ import AccountOptions from "./AccountOptions";
 import AddressInput from "./AddressInput";
 import * as helpers from "../helpers";
 import BigNumber from "bignumber.js";
+import * as polkaUtilsCrypto from "@polkadot/util-crypto";
+import * as polkaUtils from "@polkadot/util";
 
 interface TokenMetadata {
   name: string;
@@ -26,8 +28,13 @@ const TokenTransfer = () => {
   });
 
   const handleOnCheckBalance = async (addr: string) => {
-    console.log(`Checking balance for ${addr}`);
-    const balance = await erc20Evm.methods.balanceOf(addr).call();
+    // convert the address if the input is ss58
+    const evmAddr = polkaUtilsCrypto.isEthereumAddress(addr)
+      ? addr
+      : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(addr));
+
+    console.log(`Checking balance for ${evmAddr}`);
+    const balance = await erc20Evm.methods.balanceOf(evmAddr).call();
     setTokenBal(helpers.denomToDecimal(balance, tokenMeta.decimals).toFixed());
   };
 
@@ -45,14 +52,25 @@ const TokenTransfer = () => {
 
     console.log(`Transferring ${amount} Wei from ${fromAccount} to ${to}`);
 
+    // if sender = EVM => use EVM RPC to call the ERC20 contract
+    // if sender = Substrate & recipient = Substrate => use Substrate RPC to call the PSP22 contract
+    // if sender = Substrate & recipient = EVM => use Substrate RPC to call the WASM ERC20 contract
     if (activeAccount.type === "h160") {
+      // convert the recipient address to a mapped evm if the input was ss58
+      const evmRecipient = polkaUtilsCrypto.isEthereumAddress(to)
+        ? to
+        : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(to));
+
       const result = await erc20Evm.methods
-        .transfer(to, amount)
+        .transfer(evmRecipient, amount)
         .send({ from: fromAccount });
       console.log(result);
-    } else {
-      //todo: ensure that we refactor this to support Substrate transactions later
-      throw new Error("Substrate native transaction not implemented yet");
+    } else if (activeAccount.type === "ss58") {
+      if (polkaUtilsCrypto.isEthereumAddress(to)) {
+        //todo: implement WASM ERC20 contract call
+      } else {
+        //todo: implement PSP22 contract call
+      }
     }
   };
 

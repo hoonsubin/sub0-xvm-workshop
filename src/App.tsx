@@ -62,7 +62,7 @@ export default function App() {
               disabled={isConnectedToSubstrate}
             >
               {isConnectedToSubstrate
-                ? "Connected to Talisman"
+                ? "Connected to Talisman!"
                 : "Connect your Talisman"}
             </Button>
           </Stack>
