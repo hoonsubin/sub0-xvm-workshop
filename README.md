@@ -33,3 +33,18 @@ This demo is made with Debian Linux in mind, but the same requirements should ap
 9. Import the EVM developer account private key `0x01ab6e801c06e59ca97a14fc0a1978b27fa366fc87450e0b65459dd3515b7391` to your Ethereum wallet
 
 Once you confirm that your collator is running in dev mode, your Ethereum wallet is connected to the local network, and you successfully imported the EVM dev account that is fully funded, you should be ready to go.
+
+## Using the demo
+
+1. Visit [Remix](https://remix.ethereum.org) and connect it with MetaMask (ensure that MetaMask is connected to the local node).
+2. Deploy the ERC20 contract (`./contracts/erc20.sol`) to the EVM environment.
+3. Copy the contract address and save it for later.
+4. Access the local node with the Polkadot-js Portal and open the contract page. You can open it directly with this [link](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/contracts).
+5. Deploy two WASM contracts, one is the ERC20 implementation in ink (`./contracts/xvm_sdk_erc20.contract`) and the PSP20 controller contract (`./contracts/xvm_sdk_psp22.contract).
+6. When deploying the two on Polkadot-js Portal, the page will ask you to provide an EVM address as the argument for the constructor. Paste the contract address of the ERC20 that we saved.
+7. Open the `./src/config.ts` file and paste the three contract addresses.
+8. Run `yarn` on this project folder to install its dependencies.
+9. Run `yarn start` to start the project.
+10. Once you are in the page, connect the page with your MetaMask and Talisman.
+11. From here, you can decide to send the ERC20 token with the original issuer to any other accounts (another EVM account, or a Substrate native account).
+12. If a native account has an ERC20 token, you can try to send it from there to another account.
