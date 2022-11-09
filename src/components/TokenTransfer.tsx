@@ -17,7 +17,7 @@ interface TokenMetadata {
 
 const TokenTransfer = () => {
   const { getAccounts } = useWalletContext();
-  const { erc20Evm } = useContractContext();
+  const { erc20Evm, erc20Wasm, psp22Wasm } = useContractContext();
   const [activeAccount, setActiveAccount] = useState<Account>();
   const [sendAmount, setSendAmount] = useState<BigNumber>(new BigNumber(0));
   const [tokenBal, setTokenBal] = useState("0");
@@ -49,6 +49,10 @@ const TokenTransfer = () => {
 
     const amount = sendAmount.toFixed();
     const fromAccount = activeAccount?.address;
+    // convert the recipient address to a mapped evm if the input was ss58
+    const evmRecipient = polkaUtilsCrypto.isEthereumAddress(to)
+      ? to
+      : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(to));
 
     console.log(`Transferring ${amount} Wei from ${fromAccount} to ${to}`);
 
@@ -56,11 +60,6 @@ const TokenTransfer = () => {
     // if sender = Substrate & recipient = Substrate => use Substrate RPC to call the PSP22 contract
     // if sender = Substrate & recipient = EVM => use Substrate RPC to call the WASM ERC20 contract
     if (activeAccount.type === "h160") {
-      // convert the recipient address to a mapped evm if the input was ss58
-      const evmRecipient = polkaUtilsCrypto.isEthereumAddress(to)
-        ? to
-        : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(to));
-
       const result = await erc20Evm.methods
         .transfer(evmRecipient, amount)
         .send({ from: fromAccount });
@@ -68,6 +67,16 @@ const TokenTransfer = () => {
     } else if (activeAccount.type === "ss58") {
       if (polkaUtilsCrypto.isEthereumAddress(to)) {
         //todo: implement WASM ERC20 contract call
+        await erc20Wasm.tx
+          .transfer({ gasLimit: 3000n * 1000000n }, evmRecipient, amount)
+          .signAndSend(fromAccount, (result) => {
+            if (result.status.isInBlock) {
+              console.log("Transaction in block");
+            }
+            if (result.status.isFinalized) {
+              console.log("Transaction finalized");
+            }
+          });
       } else {
         //todo: implement PSP22 contract call
       }

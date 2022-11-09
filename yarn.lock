@@ -1962,6 +1962,20 @@
     "@polkadot/util" "^10.1.11"
     rxjs "^7.5.7"
 
+"@polkadot/api-contract@^9.7.1":
+  version "9.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/api-contract/-/api-contract-9.7.1.tgz#6f18d25b4b375f418d9725be20c12e64835d8439"
+  integrity sha512-tO1wxgG+uifGSSSPWaF8PnRaAddegkdH6nUIiowGg6S9ozj1LhhuxZhaH1ktxZObCEGKDRb9x2q6rZdMGB550A==
+  dependencies:
+    "@babel/runtime" "^7.20.1"
+    "@polkadot/api" "9.7.1"
+    "@polkadot/types" "9.7.1"
+    "@polkadot/types-codec" "9.7.1"
+    "@polkadot/types-create" "9.7.1"
+    "@polkadot/util" "^10.1.11"
+    "@polkadot/util-crypto" "^10.1.11"
+    rxjs "^7.5.7"
+
 "@polkadot/api-derive@9.7.1":
   version "9.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/api-derive/-/api-derive-9.7.1.tgz#ac9f03404e75a7f97b7233ac9fb9598fe9fb6140"
