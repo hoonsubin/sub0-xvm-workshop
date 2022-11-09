@@ -5,6 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Web3Provider, ContractProvider } from "./providers";
 import App from "./App";
 import theme from "./theme";
+import "@polkadot/api-augment";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement!);

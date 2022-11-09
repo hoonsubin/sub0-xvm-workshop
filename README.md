@@ -46,5 +46,6 @@ Once you confirm that your collator is running in dev mode, your Ethereum wallet
 8. Run `yarn` on this project folder to install its dependencies.
 9. Run `yarn start` to start the project.
 10. Once you are in the page, connect the page with your MetaMask and Talisman.
-11. From here, you can decide to send the ERC20 token with the original issuer to any other accounts (another EVM account, or a Substrate native account).
-12. If a native account has an ERC20 token, you can try to send it from there to another account.
+11. (important) Make sure that all accounts are funded with native tokens to pay the gas fee, both on the native side and on the EVM side to their mapped address!
+12. From here, you can decide to send the ERC20 token with the original issuer to any other accounts (another EVM account, or a Substrate native account).
+13. If a native account has an ERC20 token, you can try to send it from there to another account.

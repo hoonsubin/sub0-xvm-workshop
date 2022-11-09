@@ -33,9 +33,10 @@ const TokenTransfer = () => {
       ? addr
       : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(addr));
 
-    console.log(`Checking balance for ${evmAddr}`);
     const balance = await erc20Evm.methods.balanceOf(evmAddr).call();
-    setTokenBal(helpers.denomToDecimal(balance, tokenMeta.decimals).toFixed());
+    const formattedBalance = helpers.denomToDecimal(balance, tokenMeta.decimals).toFixed();
+    console.log(`Account ${evmAddr} has ${formattedBalance} ${tokenMeta.symbol}`);
+    setTokenBal(formattedBalance);
   };
 
   const handleSelectAccount = (account: Account) => {
