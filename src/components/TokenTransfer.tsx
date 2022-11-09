@@ -47,7 +47,7 @@ const TokenTransfer = () => {
       throw new Error("No active account selected");
     }
 
-    const wasmGasLimit = 3000n * 1000000n;
+    const wasmGasLimit = 500000;
     const amount = sendAmount.toFixed();
     const fromAccount = activeAccount?.address;
     // convert the recipient address to a mapped evm if the input was ss58
@@ -66,10 +66,11 @@ const TokenTransfer = () => {
         .send({ from: fromAccount });
       console.log(result);
     } else if (activeAccount.type === "ss58") {
-      // if the user is sending to an EVM account
+      // WASM ERC20 if the user is sending to an EVM account
       if (polkaUtilsCrypto.isEthereumAddress(to)) {
         //todo: implement WASM ERC20 contract call
-        await erc20Wasm.tx
+        console.log("Transferring with WASM ERC20");
+        await erc20Wasm?.tx
           .transfer({ gasLimit: wasmGasLimit }, evmRecipient, amount)
           .signAndSend(fromAccount, (result) => {
             if (result.status.isInBlock) {
@@ -78,18 +79,25 @@ const TokenTransfer = () => {
             if (result.status.isFinalized) {
               console.log("Transaction finalized");
             }
+            if (result.internalError) {
+              console.error(result.internalError);
+            }
           });
-        // if the user is sending to another WASM account
+        // PSP22 if the user is sending to another WASM account
       } else {
         //todo: implement PSP22 contract call
-        await psp22Wasm.tx
-          .transfer({ gasLimit: wasmGasLimit }, to, amount)
+        console.log("Transferring with WASM PSP22");
+        await psp22Wasm?.tx
+          .transfer({ gasLimit: wasmGasLimit }, to, amount, {})
           .signAndSend(fromAccount, (result) => {
             if (result.status.isInBlock) {
               console.log("Transaction in block");
             }
             if (result.status.isFinalized) {
               console.log("Transaction finalized");
+            }
+            if (result.dispatchError) {
+              console.error(result.dispatchError.toString());
             }
           });
       }

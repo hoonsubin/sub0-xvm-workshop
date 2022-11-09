@@ -7,8 +7,8 @@ import { ContractPromise } from "@polkadot/api-contract";
 
 type ContractProviderContextType = {
   erc20Evm: Contract;
-  erc20Wasm: ContractPromise;
-  psp22Wasm: ContractPromise;
+  erc20Wasm?: ContractPromise;
+  psp22Wasm?: ContractPromise;
 };
 
 // initializing the context
@@ -26,25 +26,13 @@ export const ContractProvider = ({ children }: Props) => {
     new wallet.evm.eth.Contract(evmErc20Abi as any, config.erc20EvmAddr)
   );
 
+  //note: This will not work becaus ewe need the API to be fully connected before loading the contract!
+
   // initialize ERC20 on Substrate
-  const [erc20Wasm, setErc20Wasm] = useState<ContractPromise>(() => {
-    const contract = new ContractPromise(
-      wallet.substrate,
-      wasmErc20Abi,
-      config.erc20NativeAddr
-    );
-    return contract;
-  });
+  const [erc20Wasm, setErc20Wasm] = useState<ContractPromise>();
 
   // initialize PSP22 on Substrate
-  const [psp22Wasm, setPsp22Wasm] = useState<ContractPromise>(() => {
-    const contract = new ContractPromise(
-      wallet.substrate,
-      wasmPsp22Abi,
-      config.psp22NativeAddr
-    );
-    return contract;
-  });
+  const [psp22Wasm, setPsp22Wasm] = useState<ContractPromise>();
 
   // initialize again when the component loads (maybe not needed)
   useEffect(() => {
@@ -57,19 +45,30 @@ export const ContractProvider = ({ children }: Props) => {
   }, [wallet.evm]);
 
   useEffect(() => {
-    const wasmErc20Contract = new ContractPromise(
-      wallet.substrate,
-      wasmErc20Abi,
-      config.erc20NativeAddr
-    );
-    setErc20Wasm(wasmErc20Contract);
+    console.log(`Connected to Substrate RPC: ${wallet.substrate.isConnected}`);
 
-    const wasmPsp22Contract = new ContractPromise(
-      wallet.substrate,
-      wasmPsp22Abi,
-      config.psp22NativeAddr
-    );
-    setPsp22Wasm(wasmPsp22Contract);
+    const initializeWasmContracts = async () => {
+      const substrateApi = await wallet.substrate.isReady;
+      const wasmErc20Contract = new ContractPromise(
+        substrateApi,
+        wasmErc20Abi,
+        config.erc20NativeAddr
+      );
+      setErc20Wasm(wasmErc20Contract);
+
+      const wasmPsp22Contract = new ContractPromise(
+        substrateApi,
+        wasmPsp22Abi,
+        config.psp22NativeAddr
+      );
+      setPsp22Wasm(wasmPsp22Contract);
+
+      console.log(
+        `Connected to Substrate RPC: ${wallet.substrate.isConnected}`
+      );
+    };
+
+    initializeWasmContracts().catch(console.log);
   }, [wallet.substrate]);
 
   return (

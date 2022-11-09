@@ -18,7 +18,7 @@ import {
   isWeb3Injected,
   web3Accounts,
 } from "@polkadot/extension-dapp";
-import * as polkaUtils from "@polkadot/util";
+import * as polkaUtilsCrypto from "@polkadot/util-crypto";
 
 //todo: add Polkadot.js API support too
 interface Web3Wallet {
@@ -72,8 +72,8 @@ export const Web3Provider = ({ children }: Props) => {
         setEvmConnection(connectedEvm);
 
         setWallet({
+          ...wallet,
           evm: wallet.evm,
-          substrate: await wallet.substrate.isReady,
         });
       } catch (e) {
         console.error(e);
@@ -97,6 +97,12 @@ export const Web3Provider = ({ children }: Props) => {
         if (substrateConnectStat) {
           console.log("Connected to a Substrate wallet");
         }
+
+        setWallet({
+          ...wallet,
+          substrate: await wallet.substrate.isReady,
+        });
+
         setSubstrateConnection(substrateConnectStat);
       } catch (e) {
         console.error(e);
@@ -144,6 +150,7 @@ export const Web3Provider = ({ children }: Props) => {
   // if the user changes the active account
   window.ethereum!.on("accountsChanged", initEvmProvider);
 
+  // load Substrate wallet and set the signer
   const initSubstrateProvider = useCallback(async () => {
     if (!isWeb3Injected) {
       throw new Error("The user does not have any Substrate wallet installed");
@@ -151,15 +158,14 @@ export const Web3Provider = ({ children }: Props) => {
 
     const extensions = await web3Enable("XVM Demo");
 
-    extensions.map((i) => {
-      wallet.substrate.setSigner(i.signer);
-    });
+    // set the first wallet as the signer (we assume there is only one wallet)
+    wallet.substrate.setSigner(extensions[0].signer);
 
     const injectedAccounts = await web3Accounts();
 
     if (injectedAccounts.length > 0) {
       const accounts = injectedAccounts.map((i) => {
-        return { address: i.address, type: "ss58" } as Account;
+        return { address: polkaUtilsCrypto.encodeAddress(i.address, 5), type: "ss58" } as Account;
       });
       setSs58Account(accounts);
       setSubstrateConnection(true);
