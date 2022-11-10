@@ -34,8 +34,12 @@ const TokenTransfer = () => {
       : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(addr));
 
     const balance = await erc20Evm.methods.balanceOf(evmAddr).call();
-    const formattedBalance = helpers.denomToDecimal(balance, tokenMeta.decimals).toFixed();
-    console.log(`Account ${evmAddr} has ${formattedBalance} ${tokenMeta.symbol}`);
+    const formattedBalance = helpers
+      .denomToDecimal(balance, tokenMeta.decimals)
+      .toFixed();
+    console.log(
+      `Account ${evmAddr} has ${formattedBalance} ${tokenMeta.symbol}`
+    );
     setTokenBal(formattedBalance);
   };
 
@@ -48,7 +52,7 @@ const TokenTransfer = () => {
       throw new Error("No active account selected");
     }
 
-    const wasmGasLimit = 500000;
+    const wasmGasLimit = 500000000000;
     const amount = sendAmount.toFixed();
     const fromAccount = activeAccount?.address;
     // convert the recipient address to a mapped evm if the input was ss58
@@ -69,11 +73,10 @@ const TokenTransfer = () => {
     } else if (activeAccount.type === "ss58") {
       // WASM ERC20 if the user is sending to an EVM account
       if (polkaUtilsCrypto.isEthereumAddress(to)) {
-        //todo: implement WASM ERC20 contract call
         console.log("Transferring with WASM ERC20");
         await erc20Wasm?.tx
           .transfer({ gasLimit: wasmGasLimit }, evmRecipient, amount)
-          .signAndSend(fromAccount, (result) => {
+          .signAndSend(fromAccount, { nonce: -1 }, (result) => {
             if (result.status.isInBlock) {
               console.log("Transaction in block");
             }
@@ -86,11 +89,10 @@ const TokenTransfer = () => {
           });
         // PSP22 if the user is sending to another WASM account
       } else {
-        //todo: implement PSP22 contract call
         console.log("Transferring with WASM PSP22");
         await psp22Wasm?.tx
-          .transfer({ gasLimit: wasmGasLimit }, to, amount, {})
-          .signAndSend(fromAccount, (result) => {
+          .transfer({ gasLimit: wasmGasLimit, storageDepositLimit: null }, to, amount, [])
+          .signAndSend(fromAccount, { nonce: -1 }, (result) => {
             if (result.status.isInBlock) {
               console.log("Transaction in block");
             }
