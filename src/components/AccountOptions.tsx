@@ -57,7 +57,7 @@ const AccountOptions = ({
         {accounts.map((i) => {
           return (
             <MenuItem key={i.address} onClick={() => handleSelectAccount(i)}>
-              {i.address}
+              ({i.name}) {i.address}
             </MenuItem>
           );
         })}

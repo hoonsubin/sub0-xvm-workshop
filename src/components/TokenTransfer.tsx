@@ -170,7 +170,7 @@ const TokenTransfer = () => {
             label="From"
           />
           {activeAccount ? (
-            <Typography>{activeAccount.address}</Typography>
+            <Typography>({activeAccount.name}) {activeAccount.address}</Typography>
           ) : (
             <></>
           )}
