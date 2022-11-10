@@ -6,6 +6,8 @@ import AccountOptions from "./AccountOptions";
 import AddressInput from "./AddressInput";
 import * as helpers from "../helpers";
 import BigNumber from "bignumber.js";
+import * as polkaUtilsCrypto from "@polkadot/util-crypto";
+import * as polkaUtils from "@polkadot/util";
 
 interface TokenMetadata {
   name: string;
@@ -15,7 +17,7 @@ interface TokenMetadata {
 
 const TokenTransfer = () => {
   const { getAccounts } = useWalletContext();
-  const { erc20Evm } = useContractContext();
+  const { erc20Evm, erc20Wasm, psp22Wasm } = useContractContext();
   const [activeAccount, setActiveAccount] = useState<Account>();
   const [sendAmount, setSendAmount] = useState<BigNumber>(new BigNumber(0));
   const [tokenBal, setTokenBal] = useState("0");
@@ -26,9 +28,19 @@ const TokenTransfer = () => {
   });
 
   const handleOnCheckBalance = async (addr: string) => {
-    console.log(`Checking balance for ${addr}`);
-    const balance = await erc20Evm.methods.balanceOf(addr).call();
-    setTokenBal(helpers.denomToDecimal(balance, tokenMeta.decimals).toFixed());
+    // convert the address if the input is ss58
+    const evmAddr = polkaUtilsCrypto.isEthereumAddress(addr)
+      ? addr
+      : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(addr));
+
+    const balance = await erc20Evm.methods.balanceOf(evmAddr).call();
+    const formattedBalance = helpers
+      .denomToDecimal(balance, tokenMeta.decimals)
+      .toFixed();
+    console.log(
+      `Account ${evmAddr} has ${formattedBalance} ${tokenMeta.symbol}`
+    );
+    setTokenBal(formattedBalance);
   };
 
   const handleSelectAccount = (account: Account) => {
@@ -40,19 +52,58 @@ const TokenTransfer = () => {
       throw new Error("No active account selected");
     }
 
+    const wasmGasLimit = 500000000000;
     const amount = sendAmount.toFixed();
     const fromAccount = activeAccount?.address;
+    // convert the recipient address to a mapped evm if the input was ss58
+    const evmRecipient = polkaUtilsCrypto.isEthereumAddress(to)
+      ? to
+      : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(to));
 
     console.log(`Transferring ${amount} Wei from ${fromAccount} to ${to}`);
 
+    // if sender = EVM => use EVM RPC to call the ERC20 contract
+    // if sender = Substrate & recipient = Substrate => use Substrate RPC to call the PSP22 contract
+    // if sender = Substrate & recipient = EVM => use Substrate RPC to call the WASM ERC20 contract
     if (activeAccount.type === "h160") {
       const result = await erc20Evm.methods
-        .transfer(to, amount)
+        .transfer(evmRecipient, amount)
         .send({ from: fromAccount });
       console.log(result);
-    } else {
-      //todo: ensure that we refactor this to support Substrate transactions later
-      throw new Error("Substrate native transaction not implemented yet");
+    } else if (activeAccount.type === "ss58") {
+      // WASM ERC20 if the user is sending to an EVM account
+      if (polkaUtilsCrypto.isEthereumAddress(to)) {
+        console.log("Transferring with WASM ERC20");
+        await erc20Wasm?.tx
+          .transfer({ gasLimit: wasmGasLimit }, evmRecipient, amount)
+          .signAndSend(fromAccount, { nonce: -1 }, (result) => {
+            if (result.status.isInBlock) {
+              console.log("Transaction in block");
+            }
+            if (result.status.isFinalized) {
+              console.log("Transaction finalized");
+            }
+            if (result.internalError) {
+              console.error(result.internalError);
+            }
+          });
+        // PSP22 if the user is sending to another WASM account
+      } else {
+        console.log("Transferring with WASM PSP22");
+        await psp22Wasm?.tx
+          .transfer({ gasLimit: wasmGasLimit, storageDepositLimit: null }, to, amount, [])
+          .signAndSend(fromAccount, { nonce: -1 }, (result) => {
+            if (result.status.isInBlock) {
+              console.log("Transaction in block");
+            }
+            if (result.status.isFinalized) {
+              console.log("Transaction finalized");
+            }
+            if (result.dispatchError) {
+              console.error(result.dispatchError.toString());
+            }
+          });
+      }
     }
   };
 

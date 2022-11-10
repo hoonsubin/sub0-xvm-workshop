@@ -1,11 +1,11 @@
 {
   "source": {
-    "hash": "0xfdcc3b8c3208fb90beed51d9dbf66993b150803020cc8cfbcf8d6e8ab89aa90a",
+    "hash": "0xe6fdb300b2523f58fdff2360ac531774e37f400438e697c51e2f68cac0e17437",
     "language": "ink! 3.4.0",
     "compiler": "rustc 1.65.0-nightly"
   },
   "contract": {
-    "name": "xvm-sdk-psp22",
+    "name": "xvm-sdk-psp22-controller",
     "version": "0.1.0",
     "authors": [
       "Astar Network"
@@ -172,7 +172,7 @@
             }
           ],
           "docs": [
-            " Helper function to get H160 address of the"
+            " Helper function to get H160 address of the 32 bytes accountId"
           ],
           "label": "to_h160_address",
           "mutates": false,
@@ -338,7 +338,7 @@
             }
           },
           "path": [
-            "xvm_sdk_psp22",
+            "xvm_sdk_psp22_controller",
             "psp22",
             "PSP22Error"
           ]
