@@ -112,7 +112,7 @@ export const Web3Provider = ({ children }: Props) => {
     if (isConnectedToEvm) {
       fetchNetState().catch(console.error);
     }
-  }, [isConnectedToSubstrate])
+  }, [isConnectedToSubstrate]);
 
   const initEvmProvider = useCallback(async () => {
     if (!window.ethereum) {
@@ -141,6 +141,7 @@ export const Web3Provider = ({ children }: Props) => {
       const evmAccount: Account = {
         address: account,
         type: "h160",
+        name: "Alice Dev",
       };
 
       setH160Account(evmAccount);
@@ -165,7 +166,11 @@ export const Web3Provider = ({ children }: Props) => {
 
     if (injectedAccounts.length > 0) {
       const accounts = injectedAccounts.map((i) => {
-        return { address: polkaUtilsCrypto.encodeAddress(i.address, 5), type: "ss58" } as Account;
+        return {
+          address: polkaUtilsCrypto.encodeAddress(i.address, 5),
+          type: "ss58",
+          name: i.meta.name || "Talisman",
+        } as Account;
       });
       setSs58Account(accounts);
       setSubstrateConnection(true);
