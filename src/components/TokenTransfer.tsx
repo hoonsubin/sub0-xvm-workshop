@@ -1,4 +1,4 @@
-import { Card, CardContent, TextField, Typography } from "@mui/material";
+import { Card, CardContent, Grid, FormControl, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Account } from "../types/chain";
 import { useWalletContext, useContractContext } from "../providers";
@@ -131,9 +131,19 @@ const TokenTransfer = () => {
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
             Token View
           </Typography>
-          <Typography variant="h5" component="div">
-            Token Name
-          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Typography variant="h5" component="div">
+                Token Name
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Balance: {tokenBal} {tokenMeta.symbol}
+              </Typography>
+            </Grid>
+          </Grid>
+
           <div style={{ marginTop: 3 }}>
             <AddressInput
               inputLabel="Account Address"
@@ -141,42 +151,36 @@ const TokenTransfer = () => {
               onClick={handleOnCheckBalance}
             />
           </div>
-
-          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            {tokenBal} {tokenMeta.symbol}
-          </Typography>
         </div>
 
         <div>
           <Typography variant="h5" component="div">
             Transfer
           </Typography>
-          <TextField
-            id="outlined-basic"
-            label="amount"
-            variant="outlined"
-            onChange={(i) =>
-              setSendAmount(
-                new BigNumber(
-                  helpers.decimalToDenom(i.target.value, tokenMeta.decimals)
+          <FormControl fullWidth style={{margin: '10px'}}>
+            <TextField
+              id="outlined-basic"
+              label="amount"
+              variant="outlined"
+              onChange={(i) =>
+                setSendAmount(
+                  new BigNumber(
+                    helpers.decimalToDenom(i.target.value, tokenMeta.decimals)
+                  )
                 )
-              )
-            }
-          />
+              }
+            />
+          </FormControl>
 
           <AccountOptions
             accounts={getAccounts()}
             onSelectAccount={handleSelectAccount}
             label="From"
           />
-          {activeAccount ? (
-            <Typography>({activeAccount.name}) {activeAccount.address}</Typography>
-          ) : (
-            <></>
-          )}
+
           <AddressInput
             inputLabel="to"
-            buttonLabel="Transfer!"
+            buttonLabel="Transfer"
             onClick={handleTokenTransfer}
           />
         </div>

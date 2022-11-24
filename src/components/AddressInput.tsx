@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, FormControl, TextField } from "@mui/material";
 import React, { useState } from "react";
 import * as polkaUtilsCrypto from "@polkadot/util-crypto";
 import * as polkaUtils from "@polkadot/util";
@@ -29,21 +29,27 @@ const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
 
   return (
     <>
-      <TextField
-        id="outlined-basic"
-        label={inputLabel}
-        variant="outlined"
-        onChange={(input) => handleOnInput(input.target.value)}
-      />
+      <FormControl fullWidth style={{margin: '10px'}}>
+        <TextField
+          id="outlined-basic"
+          label={inputLabel}
+          variant="outlined"
+          onChange={(input) => handleOnInput(input.target.value)}
+        />
+      </FormControl>
+
       {/* Check if the input address is SS58 or H160. If SS58, it will convert it to H160 and read the balance*/}
-      <Button
-        onClick={() => {
-          handleOnClick(addressInput);
-        }}
-        disabled={!isValidInput}
-      >
-        {buttonLabel}
-      </Button>
+      <FormControl fullWidth style={{margin: '10px'}}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            handleOnClick(addressInput);
+          }}
+          disabled={!isValidInput}
+        >
+          {buttonLabel}
+        </Button>
+      </FormControl>
     </>
   );
 };
