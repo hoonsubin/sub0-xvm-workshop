@@ -1,6 +1,12 @@
-import { Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import React from "react";
-import { Account } from "../types/chain";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import React from 'react';
+import { Account } from '../types/chain';
 
 type AccountOptionsProps = {
   onSelectAccount: (account: Account) => void;
@@ -18,13 +24,12 @@ const AccountOptions = ({
     onSelectAccount(accounts[index]);
   };
   return (
-    <FormControl fullWidth style={{margin: '10px'}}>
+    <FormControl fullWidth style={{ margin: '10px' }}>
       <InputLabel id="demo-simple-select-label">From</InputLabel>
       <Select
         id="demo-positioned-menu"
         aria-labelledby="demo-positioned-button"
-        onChange={handleSelectAccount}
-      >
+        onChange={handleSelectAccount}>
         {accounts.map((account, index) => {
           return (
             <MenuItem key={account.address} value={index}>

@@ -143,8 +143,8 @@ const TokenTransfer = () => {
   return (
     <Card sx={{ my: 5 }}>
       <CardContent>
-        <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
-          <Box gridColumn="span 8" sx={{ m: 1 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
             <div>
               <Typography
                 sx={{ fontSize: 14 }}
@@ -212,14 +212,14 @@ const TokenTransfer = () => {
                 setAddress={setToAddress}
               />
             </div>
-          </Box>
-          <Box gridColumn="span 4" m="auto">
+          </Grid>
+          <Grid item xs={4} m="auto">
             <TransactionFlow
               fromAccount={activeAccount}
               toAddress={toAddressInput}
             />
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </CardContent>
     </Card>
   );
