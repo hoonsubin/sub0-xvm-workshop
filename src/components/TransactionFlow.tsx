@@ -21,7 +21,7 @@ const TransactionFlow = ({
   const { erc20Evm, erc20Wasm, psp22Wasm } = useContractContext();
   const [destAddress, setDestAddress] = useState<string>('');
   const [signerType, setSignerType] = useState<SignerType>(null);
-  const [contractName, setContractName] = useState<string>('Contract');
+  const [contractName, setContractName] = useState<string>('');
 
   const isMappedH160 =
     signerType === 'EVM' && !polkaUtilsCrypto.isEthereumAddress(toAddress);
