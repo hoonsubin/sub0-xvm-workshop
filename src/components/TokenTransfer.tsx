@@ -17,6 +17,7 @@ import BigNumber from 'bignumber.js';
 import * as polkaUtilsCrypto from '@polkadot/util-crypto';
 import * as polkaUtils from '@polkadot/util';
 import TransactionFlow from './TransactionFlow';
+import { formatNumber } from '../helpers';
 
 interface TokenMetadata {
   name: string;
@@ -161,7 +162,7 @@ const TokenTransfer = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                    Balance: {tokenBal} {tokenMeta.symbol}
+                    Balance: {formatNumber(tokenBal)} {tokenMeta.symbol}
                   </Typography>
                 </Grid>
               </Grid>
