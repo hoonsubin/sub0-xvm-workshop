@@ -42,7 +42,7 @@ Once you confirm that your collator is running in dev mode, your Ethereum wallet
 4. Access the local node with the Polkadot-js Portal and open the contract page. You can open it directly with this [link](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/contracts).
 5. Deploy two WASM contracts, one is the ERC20 implementation in ink (`./contracts/xvm_sdk_erc20.contract`) and the PSP20 controller contract (`./contracts/xvm_sdk_psp22.contract).
 6. When deploying the two on Polkadot-js Portal, the page will ask you to provide an EVM address as the argument for the constructor. Paste the contract address of the ERC20 that we saved.
-7. Create the `.env` file and paste the three contract addresses (you can refer to `./.env.example`).
+7. Open the `./src/config.ts` file and paste the three contract addresses.
 8. Run `yarn` on this project folder to install its dependencies.
 9. Run `yarn start` to start the project.
 10. Once you are in the page, connect the page with your MetaMask and Talisman.
