@@ -1,16 +1,22 @@
-import { Button, FormControl, TextField } from "@mui/material";
-import React, { useState } from "react";
-import * as polkaUtilsCrypto from "@polkadot/util-crypto";
-import * as polkaUtils from "@polkadot/util";
+import { Button, FormControl, TextField } from '@mui/material';
+import * as polkaUtilsCrypto from '@polkadot/util-crypto';
+import React, { useState } from 'react';
 
 type Props = {
   inputLabel: string;
   buttonLabel: string;
+  addressInput: string;
   onClick: (input: string) => void;
+  setAddress: (input: string) => void;
 };
 
-const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
-  const [addressInput, setAddress] = useState("");
+const AddressInput = ({
+  inputLabel,
+  buttonLabel,
+  addressInput,
+  onClick,
+  setAddress,
+}: Props) => {
   const [isValidInput, setIsValidInput] = useState(false);
 
   const handleOnClick = (address: string) => {
@@ -19,7 +25,10 @@ const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
 
   const handleOnInput = (input: string) => {
     // check if the input is a valid ethereum or Substrate address
-    if (polkaUtilsCrypto.isEthereumAddress(input) || polkaUtilsCrypto.isAddress(input)) {
+    if (
+      polkaUtilsCrypto.isEthereumAddress(input) ||
+      polkaUtilsCrypto.isAddress(input)
+    ) {
       setAddress(input);
       setIsValidInput(true);
     } else {
@@ -29,7 +38,7 @@ const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
 
   return (
     <>
-      <FormControl fullWidth style={{margin: '10px'}}>
+      <FormControl fullWidth style={{ margin: '10px' }}>
         <TextField
           id="outlined-basic"
           label={inputLabel}
@@ -39,14 +48,13 @@ const AddressInput = ({ inputLabel, buttonLabel, onClick }: Props) => {
       </FormControl>
 
       {/* Check if the input address is SS58 or H160. If SS58, it will convert it to H160 and read the balance*/}
-      <FormControl fullWidth style={{margin: '10px'}}>
+      <FormControl fullWidth style={{ margin: '10px' }}>
         <Button
           variant="contained"
           onClick={() => {
             handleOnClick(addressInput);
           }}
-          disabled={!isValidInput}
-        >
+          disabled={!isValidInput}>
           {buttonLabel}
         </Button>
       </FormControl>

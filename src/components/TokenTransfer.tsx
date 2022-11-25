@@ -1,13 +1,22 @@
-import { Card, CardContent, Grid, FormControl, TextField, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { Account } from "../types/chain";
-import { useWalletContext, useContractContext } from "../providers";
-import AccountOptions from "./AccountOptions";
-import AddressInput from "./AddressInput";
-import * as helpers from "../helpers";
-import BigNumber from "bignumber.js";
-import * as polkaUtilsCrypto from "@polkadot/util-crypto";
-import * as polkaUtils from "@polkadot/util";
+import {
+  Card,
+  CardContent,
+  Grid,
+  FormControl,
+  TextField,
+  Typography,
+  Box,
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Account } from '../types/chain';
+import { useWalletContext, useContractContext } from '../providers';
+import AccountOptions from './AccountOptions';
+import AddressInput from './AddressInput';
+import * as helpers from '../helpers';
+import BigNumber from 'bignumber.js';
+import * as polkaUtilsCrypto from '@polkadot/util-crypto';
+import * as polkaUtils from '@polkadot/util';
+import TransactionFlow from './TransactionFlow';
 
 interface TokenMetadata {
   name: string;
@@ -20,12 +29,14 @@ const TokenTransfer = () => {
   const { erc20Evm, erc20Wasm, psp22Wasm } = useContractContext();
   const [activeAccount, setActiveAccount] = useState<Account>();
   const [sendAmount, setSendAmount] = useState<BigNumber>(new BigNumber(0));
-  const [tokenBal, setTokenBal] = useState("0");
+  const [tokenBal, setTokenBal] = useState('0');
   const [tokenMeta, setTokenMeta] = useState<TokenMetadata>({
-    name: "",
-    symbol: "",
+    name: '',
+    symbol: '',
     decimals: 1,
   });
+  const [fromAddressInput, setFromAddress] = useState('');
+  const [toAddressInput, setToAddress] = useState('');
 
   const handleOnCheckBalance = async (addr: string) => {
     // convert the address if the input is ss58
@@ -49,7 +60,7 @@ const TokenTransfer = () => {
 
   const handleTokenTransfer = async (to: string) => {
     if (!activeAccount) {
-      throw new Error("No active account selected");
+      throw new Error('No active account selected');
     }
 
     const wasmGasLimit = 500000000000;
@@ -65,23 +76,23 @@ const TokenTransfer = () => {
     // if sender = EVM => use EVM RPC to call the ERC20 contract
     // if sender = Substrate & recipient = Substrate => use Substrate RPC to call the PSP22 contract
     // if sender = Substrate & recipient = EVM => use Substrate RPC to call the WASM ERC20 contract
-    if (activeAccount.type === "h160") {
+    if (activeAccount.type === 'h160') {
       const result = await erc20Evm.methods
         .transfer(evmRecipient, amount)
         .send({ from: fromAccount });
       console.log(result);
-    } else if (activeAccount.type === "ss58") {
+    } else if (activeAccount.type === 'ss58') {
       // WASM ERC20 if the user is sending to an EVM account
       if (polkaUtilsCrypto.isEthereumAddress(to)) {
-        console.log("Transferring with WASM ERC20");
+        console.log('Transferring with WASM ERC20');
         await erc20Wasm?.tx
           .transfer({ gasLimit: wasmGasLimit }, evmRecipient, amount)
           .signAndSend(fromAccount, { nonce: -1 }, (result) => {
             if (result.status.isInBlock) {
-              console.log("Transaction in block");
+              console.log('Transaction in block');
             }
             if (result.status.isFinalized) {
-              console.log("Transaction finalized");
+              console.log('Transaction finalized');
             }
             if (result.internalError) {
               console.error(result.internalError);
@@ -89,15 +100,20 @@ const TokenTransfer = () => {
           });
         // PSP22 if the user is sending to another WASM account
       } else {
-        console.log("Transferring with WASM PSP22");
+        console.log('Transferring with WASM PSP22');
         await psp22Wasm?.tx
-          .transfer({ gasLimit: wasmGasLimit, storageDepositLimit: null }, to, amount, [])
+          .transfer(
+            { gasLimit: wasmGasLimit, storageDepositLimit: null },
+            to,
+            amount,
+            []
+          )
           .signAndSend(fromAccount, { nonce: -1 }, (result) => {
             if (result.status.isInBlock) {
-              console.log("Transaction in block");
+              console.log('Transaction in block');
             }
             if (result.status.isFinalized) {
-              console.log("Transaction finalized");
+              console.log('Transaction finalized');
             }
             if (result.dispatchError) {
               console.error(result.dispatchError.toString());
@@ -127,63 +143,83 @@ const TokenTransfer = () => {
   return (
     <Card sx={{ my: 5 }}>
       <CardContent>
-        <div>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Token View
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
+        <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
+          <Box gridColumn="span 8" sx={{ m: 1 }}>
+            <div>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.primary"
+                gutterBottom>
+                Token View
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={8}>
+                  <Typography variant="h5" component="div">
+                    Token Name
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                    Balance: {tokenBal} {tokenMeta.symbol}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <div style={{ marginTop: 3 }}>
+                <AddressInput
+                  inputLabel="Account Address"
+                  buttonLabel="Check Balance"
+                  onClick={handleOnCheckBalance}
+                  addressInput={fromAddressInput}
+                  setAddress={setFromAddress}
+                />
+              </div>
+            </div>
+
+            <div>
               <Typography variant="h5" component="div">
-                Token Name
+                Transfer
               </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Balance: {tokenBal} {tokenMeta.symbol}
-              </Typography>
-            </Grid>
-          </Grid>
+              <FormControl fullWidth style={{ margin: '10px' }}>
+                <TextField
+                  id="outlined-basic"
+                  label="amount"
+                  variant="outlined"
+                  onChange={(i) =>
+                    setSendAmount(
+                      new BigNumber(
+                        helpers.decimalToDenom(
+                          i.target.value,
+                          tokenMeta.decimals
+                        )
+                      )
+                    )
+                  }
+                />
+              </FormControl>
 
-          <div style={{ marginTop: 3 }}>
-            <AddressInput
-              inputLabel="Account Address"
-              buttonLabel="Check Balance"
-              onClick={handleOnCheckBalance}
+              <AccountOptions
+                accounts={getAccounts()}
+                onSelectAccount={handleSelectAccount}
+                label="From"
+              />
+
+              <AddressInput
+                inputLabel="to"
+                buttonLabel="Transfer"
+                onClick={handleTokenTransfer}
+                addressInput={toAddressInput}
+                setAddress={setToAddress}
+              />
+            </div>
+          </Box>
+          <Box gridColumn="span 4" m="auto">
+            <TransactionFlow
+              fromAccount={activeAccount}
+              toAddress={toAddressInput}
             />
-          </div>
-        </div>
-
-        <div>
-          <Typography variant="h5" component="div">
-            Transfer
-          </Typography>
-          <FormControl fullWidth style={{margin: '10px'}}>
-            <TextField
-              id="outlined-basic"
-              label="amount"
-              variant="outlined"
-              onChange={(i) =>
-                setSendAmount(
-                  new BigNumber(
-                    helpers.decimalToDenom(i.target.value, tokenMeta.decimals)
-                  )
-                )
-              }
-            />
-          </FormControl>
-
-          <AccountOptions
-            accounts={getAccounts()}
-            onSelectAccount={handleSelectAccount}
-            label="From"
-          />
-
-          <AddressInput
-            inputLabel="to"
-            buttonLabel="Transfer"
-            onClick={handleTokenTransfer}
-          />
-        </div>
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );
