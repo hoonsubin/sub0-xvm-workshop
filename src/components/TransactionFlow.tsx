@@ -31,7 +31,6 @@ const TransactionFlow = ({
   const { erc20Evm, erc20Wasm, psp22Wasm } = useContractContext();
   const [destAddress, setDestAddress] = useState<string>('');
   const [contractAddress, setContractAddress] = useState<string>('');
-  const contractAddressTest = '0xc9ec54736DD2A2ef6A56AB0330bb04E1aCA43472';
   const [signerType, setSignerType] = useState<SignerType>(null);
   const [contractType, setContractType] =
     useState<ContractType>('Contract Type');
@@ -103,7 +102,7 @@ const TransactionFlow = ({
         <div className="flow--column">
           <span className="flow--text--title">{contractType}</span>
           <span className="flow--text--value">
-            {getShortenAddress(contractAddressTest)}
+            {getShortenAddress(contractAddress)}
           </span>
         </div>
         <div className="flow--icon">
