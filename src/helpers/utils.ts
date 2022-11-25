@@ -6,6 +6,6 @@ export const getShortenAddress = (address: string, place = 6): string => {
 
 // Memo: format a number with commas as thousands separators
 export const formatNumber = (value: number | string) => {
-  const num = Number(value).toFixed(2);
-  return new Intl.NumberFormat('en-IN', {}).format(Number(num));
+  const num = Number(Number(value).toFixed(2));
+  return num.toLocaleString('en-US');
 };
