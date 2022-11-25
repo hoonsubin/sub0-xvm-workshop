@@ -5,6 +5,11 @@
   color: gray;
 }
 
+.flow--text--remark {
+  color: gray;
+  font-size: 14px;
+}
+
 .flow--text--value {
   font-size: 20px;
 }

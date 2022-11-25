@@ -7,12 +7,7 @@ import { useContractContext } from '../providers';
 import * as polkaUtilsCrypto from '@polkadot/util-crypto';
 import * as polkaUtils from '@polkadot/util';
 import { getShortenAddress } from '../helpers';
-
-type ContractName =
-  | 'Contract'
-  | 'ERC20 Smart Contract'
-  | 'PSP22 XVM Smart Contract'
-  | 'ERC20 XVM Smart Contract';
+import { wasmErc20Abi, wasmPsp22Abi } from '../abi';
 
 type SignerType = null | 'Substrate' | 'EVM';
 
@@ -25,9 +20,11 @@ const TransactionFlow = ({
 }) => {
   const { erc20Evm, erc20Wasm, psp22Wasm } = useContractContext();
   const [destAddress, setDestAddress] = useState<string>('');
-  const [contractAddress, setContractAddress] = useState<string>('');
   const [signerType, setSignerType] = useState<SignerType>(null);
-  const [contractName, setContractName] = useState<ContractName>('Contract');
+  const [contractName, setContractName] = useState<string>('Contract');
+
+  const isMappedH160 =
+    signerType === 'EVM' && !polkaUtilsCrypto.isEthereumAddress(toAddress);
 
   const handleUpdateSignerType = (): void => {
     if (!fromAccount) return;
@@ -46,20 +43,18 @@ const TransactionFlow = ({
         ? toAddress
         : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(toAddress));
       setDestAddress(evmRecipient);
-      setContractAddress(erc20Evm.options.address);
     }
 
     if (fromAccount.type === 'ss58') {
       setContractName(
         isDestAddressEvm
-          ? 'ERC20 XVM Smart Contract'
-          : 'PSP22 XVM Smart Contract'
+          ? wasmErc20Abi.contract.name
+          : wasmPsp22Abi.contract.name
       );
       const xvmContract = isDestAddressEvm
         ? erc20Wasm?.address.toString()
         : psp22Wasm?.address.toString();
 
-      setContractAddress(xvmContract || '');
       setDestAddress(toAddress);
     }
   };
@@ -94,10 +89,8 @@ const TransactionFlow = ({
           />
         </div>
         <div className="flow--column">
-          <span className="flow--text--title">{contractName}</span>
-          <span className="flow--text--value">
-            {getShortenAddress(contractAddress)}
-          </span>
+          <span className="flow--text--title">Smart Contract</span>
+          <span className="flow--text--value">{contractName}</span>
         </div>
         <div className="flow--icon">
           <KeyboardArrowDownIcon
@@ -108,6 +101,9 @@ const TransactionFlow = ({
         </div>
         <div className="flow--column">
           <span className="flow--text--title">Destination</span>
+          {isMappedH160 && (
+            <span className="flow--text--remark">(Mapped H160 Address)</span>
+          )}
           <span className="flow--text--value">
             {getShortenAddress(destAddress)}
           </span>
