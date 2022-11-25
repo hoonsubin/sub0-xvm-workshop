@@ -6,20 +6,15 @@ import { Account } from '../types/chain';
 import { useContractContext } from '../providers';
 import * as polkaUtilsCrypto from '@polkadot/util-crypto';
 import * as polkaUtils from '@polkadot/util';
+import { getShortenAddress } from '../helpers';
 
-type ContractType =
+type ContractName =
   | 'Contract Type'
   | 'ERC20 Smart Contract Address'
   | 'PSP22 XVM Smart Contract Address'
   | 'ERC20 XVM Smart Contract Address';
 
 type SignerType = null | 'Substrate' | 'EVM';
-
-const getShortenAddress = (address: string, place = 6): string => {
-  return address
-    ? `${address.slice(0, place)}${'.'.repeat(place)}${address.slice(-place)}`
-    : '';
-};
 
 const TransactionFlow = ({
   fromAccount,
@@ -32,8 +27,8 @@ const TransactionFlow = ({
   const [destAddress, setDestAddress] = useState<string>('');
   const [contractAddress, setContractAddress] = useState<string>('');
   const [signerType, setSignerType] = useState<SignerType>(null);
-  const [contractType, setContractType] =
-    useState<ContractType>('Contract Type');
+  const [contractName, setContractName] =
+    useState<ContractName>('Contract Type');
 
   const handleUpdateSignerType = (): void => {
     if (!fromAccount) return;
@@ -47,7 +42,7 @@ const TransactionFlow = ({
     const isDestAddressEvm = polkaUtilsCrypto.isEthereumAddress(toAddress);
 
     if (fromAccount.type === 'h160') {
-      setContractType('ERC20 Smart Contract Address');
+      setContractName('ERC20 Smart Contract Address');
       const evmRecipient = isDestAddressEvm
         ? toAddress
         : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(toAddress));
@@ -56,7 +51,7 @@ const TransactionFlow = ({
     }
 
     if (fromAccount.type === 'ss58') {
-      setContractType(
+      setContractName(
         isDestAddressEvm
           ? 'ERC20 XVM Smart Contract Address'
           : 'PSP22 XVM Smart Contract Address'
@@ -100,7 +95,7 @@ const TransactionFlow = ({
           />
         </div>
         <div className="flow--column">
-          <span className="flow--text--title">{contractType}</span>
+          <span className="flow--text--title">{contractName}</span>
           <span className="flow--text--value">
             {getShortenAddress(contractAddress)}
           </span>
