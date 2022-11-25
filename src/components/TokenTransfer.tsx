@@ -5,7 +5,6 @@ import {
   FormControl,
   TextField,
   Typography,
-  Box,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Account } from '../types/chain';
@@ -154,14 +153,18 @@ const TokenTransfer = () => {
                 gutterBottom>
                 Token View
               </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
+              <Grid
+                container
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center">
+                <Grid item>
                   <Typography variant="h5" component="div">
                     Token Name
                   </Typography>
                 </Grid>
-                <Grid item xs={4}>
-                  <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                <Grid item>
+                  <Typography color="text.secondary">
                     Balance: {formatNumber(tokenBal)} {tokenMeta.symbol}
                   </Typography>
                 </Grid>
