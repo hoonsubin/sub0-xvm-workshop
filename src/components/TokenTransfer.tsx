@@ -35,8 +35,9 @@ const TokenTransfer = () => {
     symbol: '',
     decimals: 1,
   });
-  const [fromAddressInput, setFromAddress] = useState('');
-  const [toAddressInput, setToAddress] = useState('');
+  const [checkBalanceAddressInput, setCheckBalanceAddressInput] =
+    useState<string>('');
+  const [toAddressInput, setToAddressInput] = useState<string>('');
 
   const handleOnCheckBalance = async (addr: string) => {
     // convert the address if the input is ss58
@@ -170,8 +171,8 @@ const TokenTransfer = () => {
                   inputLabel="Account Address"
                   buttonLabel="Check Balance"
                   onClick={handleOnCheckBalance}
-                  addressInput={fromAddressInput}
-                  setAddress={setFromAddress}
+                  addressInput={checkBalanceAddressInput}
+                  setAddress={setCheckBalanceAddressInput}
                 />
               </div>
             </div>
@@ -202,6 +203,7 @@ const TokenTransfer = () => {
                 accounts={getAccounts()}
                 onSelectAccount={handleSelectAccount}
                 label="From"
+                fromAddressInput={activeAccount?.address || ''}
               />
 
               <AddressInput
@@ -209,7 +211,7 @@ const TokenTransfer = () => {
                 buttonLabel="Transfer"
                 onClick={handleTokenTransfer}
                 addressInput={toAddressInput}
-                setAddress={setToAddress}
+                setAddress={setToAddressInput}
               />
             </div>
           </Grid>
