@@ -27,8 +27,7 @@ const TransactionFlow = ({
   const [destAddress, setDestAddress] = useState<string>('');
   const [contractAddress, setContractAddress] = useState<string>('');
   const [signerType, setSignerType] = useState<SignerType>(null);
-  const [contractName, setContractName] =
-    useState<ContractName>('Contract Type');
+  const [contractName, setContractName] = useState<ContractName>('Contract');
 
   const handleUpdateSignerType = (): void => {
     if (!fromAccount) return;
