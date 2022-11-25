@@ -26,7 +26,7 @@ This demo is made with Debian Linux in mind, but the same requirements should ap
 2. Install [Cargo Contract](https://github.com/paritytech/cargo-contract)
 3. Install npm (I recommend using [NVM](https://github.com/nvm-sh/nvm))
 4. Install an Ethereum wallet and a Substrate wallet to your browser (we will use MetaMask and Talisman on Firefox for this example)
-5. Clone the [Astar collator node](https://github.com/AstarNetwork/Astar/tree/feature/pallet-xvm-v2) and check out the `feature/pallet-xvm-v2` branch
+5. Clone the [Astar collator node](https://github.com/AstarNetwork/Astar)
 6. Build the Astar collator node using `cargo build --release`
 7. Run the Astar collator in a local dev mode with the `--dev --tmp -l xvm=trace` flag
 8. (Optional) Clone the [ink XVM SDK](https://github.com/AstarNetwork/ink-xvm-sdk) repository and build the contract using `cargo contract build` (note that you have to build directly from the contract folder like `erc20` or `psp22-controller`). Because this demo repository contains the pre-compiled contract binaries, this step is optional
