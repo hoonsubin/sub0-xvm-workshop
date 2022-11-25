@@ -9,10 +9,10 @@ import * as polkaUtils from '@polkadot/util';
 import { getShortenAddress } from '../helpers';
 
 type ContractName =
-  | 'Contract Type'
-  | 'ERC20 Smart Contract Address'
-  | 'PSP22 XVM Smart Contract Address'
-  | 'ERC20 XVM Smart Contract Address';
+  | 'Contract'
+  | 'ERC20 Smart Contract'
+  | 'PSP22 XVM Smart Contract'
+  | 'ERC20 XVM Smart Contract';
 
 type SignerType = null | 'Substrate' | 'EVM';
 
@@ -42,7 +42,7 @@ const TransactionFlow = ({
     const isDestAddressEvm = polkaUtilsCrypto.isEthereumAddress(toAddress);
 
     if (fromAccount.type === 'h160') {
-      setContractName('ERC20 Smart Contract Address');
+      setContractName('ERC20 Smart Contract');
       const evmRecipient = isDestAddressEvm
         ? toAddress
         : polkaUtils.u8aToHex(polkaUtilsCrypto.addressToEvm(toAddress));
@@ -53,8 +53,8 @@ const TransactionFlow = ({
     if (fromAccount.type === 'ss58') {
       setContractName(
         isDestAddressEvm
-          ? 'ERC20 XVM Smart Contract Address'
-          : 'PSP22 XVM Smart Contract Address'
+          ? 'ERC20 XVM Smart Contract'
+          : 'PSP22 XVM Smart Contract'
       );
       const xvmContract = isDestAddressEvm
         ? erc20Wasm?.address.toString()
