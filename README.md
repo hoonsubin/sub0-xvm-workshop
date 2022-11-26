@@ -1,12 +1,6 @@
 # Sub0 XVM Contract Demo App
 
-## Introduction
-
 This repository contains the full project for the Sub0 developer conference workshop.
-The demo will focus on controlling an EVM ERC20 tokens from a Substrate native account.
-With XVM, we can create a developer environment where projects can reside either in EVM with Ethereum signers or WASM contract with Substrate native signers.
-
-Because we are controlling the ERC20 tokens in the EVM environment from a native account, we will extensively use the [EVM mapped address](https://medium.com/astar-network/using-astar-network-account-between-substrate-and-evm-656643df22a0), which does not have a direct signer attached to it.
 
 ## Architecture
 
@@ -17,6 +11,28 @@ XVM (Cross-Virtual Machine) takes a very straight-forward approach to interopera
 For the call to work, we encode the arguments that are passed to a smart contract function and feed them to the chain extension.
 The chain extension will communicate with the XVM core and send the message to the correct VM adapter with the corresponding ID.
 That is when the contract is executed on chain.
+
+## What this demo will do
+
+
+The demo will focus on controlling an EVM ERC20 tokens from a Substrate native account.
+With XVM, we can create a developer environment where projects can reside either in EVM with Ethereum signers or WASM contract with Substrate native signers.
+
+Because we are controlling the ERC20 tokens in the EVM environment from a native account, we will extensively use the [EVM mapped address](https://medium.com/astar-network/using-astar-network-account-between-substrate-and-evm-656643df22a0), which does not have a direct signer attached to it.
+
+We will show three transfer cases.
+
+1. Sending a ERC20 token from an EVM account to a native account.
+
+![XVM TX case 1](img/xvm-case-1.jpg)
+
+2. Sending a ERC20 token from a native account to another native account.
+
+![XVM TX case 1](img/xvm-case-2.jpg)
+
+3. Sending a ERC20 token from a native account back to the EVM account.
+
+![XVM TX case 1](img/xvm-case-3.jpg)
 
 ## Prerequisites and Preparation
 
