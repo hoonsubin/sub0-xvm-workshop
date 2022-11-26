@@ -1,0 +1,36 @@
+.wrapper {
+}
+
+.flow--text--title {
+  color: gray;
+}
+
+.flow--text--remark {
+  color: gray;
+  font-size: 14px;
+}
+
+.flow--text--value {
+  font-size: 20px;
+}
+
+.flow--title {
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.flow--box {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+.flow--column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow--icon {
+  text-align: center;
+}
